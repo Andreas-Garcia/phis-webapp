@@ -147,7 +147,13 @@ class ExperimentController extends Controller {
         //4. get annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
-        $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+        $annotationSearchParameters = [];
+        if (isset($searchParams[WSConstants::ANNOTATION_WIDGET_PAGE])) {
+            $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::ANNOTATION_WIDGET_PAGE]--;
+        }
+        $annotationProvider = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $annotationSearchParameters);
+        $annotationProvider->pagination->pageParam = WSConstants::ANNOTATION_WIDGET_PAGE;
+
         
         //5. get events
         $searchEventModel = new EventSearch();

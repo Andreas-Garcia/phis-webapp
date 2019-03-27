@@ -10,6 +10,8 @@
 namespace app\models\yiiModels;
 
 use app\models\yiiModels\YiiAnnotationModel;
+use app\models\wsModels\WSConstants;
+use yii\data\ArrayDataProvider;
 
 /**
  * AnnotationSearch represents the model behind the search form about
@@ -48,7 +50,7 @@ class AnnotationSearch extends YiiAnnotationModel {
         
         //2. Check validity of search data
         if (!$this->validate()) {
-            return new \yii\data\ArrayDataProvider();
+            return new ArrayDataProvider();
         }
 
         //3. Request to the web service and return result
@@ -61,7 +63,7 @@ class AnnotationSearch extends YiiAnnotationModel {
             return \app\models\wsModels\WSConstants::TOKEN;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
-            return new \yii\data\ArrayDataProvider([
+            return new ArrayDataProvider([
                 'models' => $resultSet,
                 'pagination' => [
                     'pageSize' => $this->pageSize,
