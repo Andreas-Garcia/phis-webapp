@@ -1,16 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       ScientificObjectController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+//******************************************************************************
+//                       ScientificObjectController.php 
+// SILEX-PHIS
+// Copyright © INRA 2017
 // Creation date: August 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  August, 30 2017
-// Subject: implements the CRUD actions for YiiScientificObjectModel
-//***********************************************************************************************
+//******************************************************************************
  namespace app\controllers;
  
  use Yii;
@@ -20,11 +15,14 @@
  use app\models\yiiModels\YiiScientificObjectModel;
  use app\models\yiiModels\ScientificObjectSearch;
  use app\models\yiiModels\YiiExperimentModel;
+ use app\models\wsModels\WSConstants;
+ use app\models\yiiModels\YiiSpeciesModel;
+ use app\models\yiiModels\YiiModelsConstants;
 
 require_once '../config/config.php';
  
 /**
- * CRUD actions for YiiScientificObjectModel
+ * Scientific object controller.
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiScientificObjectModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
@@ -32,55 +30,62 @@ require_once '../config/config.php';
  class ScientificObjectController extends Controller {
      
      /**
-      * the delim caracter for the csv files
+      * Delimiter character of the CSV files.
       * @var DELIM_CSV
       */
      const DELIM_CSV = ";";
+     
      /**
-      * the geometry column for the csv files
+      * Geometry column in the CSV files.
       * @var GEOMETRY
       */
      const GEOMETRY = "Geometry";
+     
      /**
-      * the experiment uri column for the csv files
+      * Experiment URI column in the CSV files
       * @var EXPERIMENT_URI
       */
+     
      const EXPERIMENT_URI = "ExperimentURI";
+     
      /**
-      * the alias column for the csv files
+      * Alias column in the CSV files.
       * @var ALIAS
       */
      const ALIAS = "Alias";
+     
      /**
-      * the species column for the csv files
+      * Species column in the CSV files.
       * @var SPECIES
       */
      const SPECIES = "Species";
+     
      /**
-      * the variety column for the csv files
+      * Variety column for the CSV files.
       * @var VARIETY
       */
      const VARIETY = "Variety";
+     
      /**
-      * the experimental modalities column for the csv files
+      * Experimental modalities column for the CSV files.
       * @var EXPERIMENT_MODALITIES
       */
      const EXPERIMENT_MODALITIES = "ExperimentModalities";
+     
      /**
-      * the replication column for the csv files
+      * Replication column for the CSV files.
       * @var REPLICATION
       */
      const REPLICATION = "Replication";
      
     /**
-      * the replication column for the csv files
+      * Replication column for the CSV files.
       * @var RDF_TYPE
       */
     const RDF_TYPE = "RdfType";
      
-          
-     /**
-     * define the behaviors
+    /**
+     * Defines the behaviours.
      * @return array
      */
      public function behaviors() {
@@ -95,12 +100,12 @@ require_once '../config/config.php';
     }
     
     /**
-     * get the types of scientific object
-     * @return array list of the obejct types uris 
-     * e.g. [
-     *          "UAV",
-     *          "Pot"
-     *      ]
+     * Gets the types of scientific object.
+     * @return array list of the object types URIs.
+     * @example [
+     *             "UAV",
+     *             "Pot"
+     *          ]
      */
     public function getObjectTypes() {
         $model = new YiiScientificObjectModel();
@@ -109,59 +114,58 @@ require_once '../config/config.php';
         $totalPages = 1;
         for ($i = 0; $i < $totalPages; $i++) {
             $model->page = $i;
-            $scientificObjectConcepts = $model->getObjectTypes(Yii::$app->session['access_token']);
-            if ($scientificObjectConcepts === "token") {
-                return "token";
+            $scientificObjectConcepts = $model->getObjectTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+            if ($scientificObjectConcepts === WSConstants::TOKEN) {
+                return WSConstants::TOKEN;
             } else {
-                $totalPages = $scientificObjectConcepts[\app\models\wsModels\WSConstants::PAGINATION][\app\models\wsModels\WSConstants::TOTAL_PAGES];
+                $totalPages = $scientificObjectConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
 
-                foreach ($scientificObjectConcepts[\app\models\wsModels\WSConstants::DATA] as $objectType) {
+                foreach ($scientificObjectConcepts[WSConstants::DATA] as $objectType) {
                     $objectsTypes[] = explode("#", $objectType->uri)[1];
                 }
             }
         }
-        
         return $objectsTypes;
     }
     
     /**
-     * get the experiments
-     * @return array list of species
+     * Get the experiments URIs.
+     * @return array list of experiments.
      */
     public function getExperimentsURI() {
         $model = new YiiExperimentModel();
-        return $model->getExperimentsURIList(Yii::$app->session['access_token']);
+        return $model->getExperimentsURIList(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
     }
     
     /**
-     * get the species 
-     * @return array list of species
+     * Get the species.
+     * @return array list of species.
      */
     public function getSpecies() {
-        $speciesModel = new \app\models\yiiModels\YiiSpeciesModel();
+        $speciesModel = new YiiSpeciesModel();
         return $speciesModel->getSpeciesList(Yii::$app->session['access_token']);
     }
     
-    
-    
-    
     /**
-     * get the csv file header
+     * Gets the CSV file header
      * @return array list of the columns names for a scientific objects file
      */
     private function getHeaderList() {
-        return [ScientificObjectController::ALIAS, ScientificObjectController::RDF_TYPE,  
-                ScientificObjectController::EXPERIMENT_URI, ScientificObjectController::GEOMETRY, 
-                ScientificObjectController::SPECIES, ScientificObjectController::VARIETY, 
-                ScientificObjectController::EXPERIMENT_MODALITIES, ScientificObjectController::REPLICATION];
+        return [
+            ScientificObjectController::ALIAS, 
+            ScientificObjectController::RDF_TYPE,  
+            ScientificObjectController::EXPERIMENT_URI, 
+            ScientificObjectController::GEOMETRY, 
+            ScientificObjectController::SPECIES, 
+            ScientificObjectController::VARIETY, 
+            ScientificObjectController::EXPERIMENT_MODALITIES, 
+            ScientificObjectController::REPLICATION];
     }
     
     /**
-     * 
-     * @param array $csvHeader an array with for example the 
-     *                         columns of a csv file
+     * @param array $csvHeader an array with for example the columns of a CSV file
      * @return boolean true if the required columns are in the $csvHeader 
-     *                 false if not
+     *                 false otherwise
      */
     private function existRequiredColumns($csvHeader) {
         return in_array(ScientificObjectController::ALIAS, $csvHeader) 
@@ -170,7 +174,7 @@ require_once '../config/config.php';
     }
     
     /**
-     * check if the columns names exist in the file. 
+     * Checks if the column names exist in the file. 
      * @param array $csvHeader the header columns list 
      * @return array if error the errors in the file 
      *               else a key value array corresponding to the columns number 
@@ -190,12 +194,10 @@ require_once '../config/config.php';
         } else {
             $headersNamesNumber["Error"][] = Yii::t('app/messages','Required column missing');
         }
-        
         return $headersNamesNumber;
     }
     
     /**
-     * 
      * @param array $array
      * @return array the array without values equals to ""
      */
@@ -206,19 +208,17 @@ require_once '../config/config.php';
                 $toReturn[] = $element;
             }
          }
-         
          return $toReturn;
     }
     
     /**
-     * check the geometry format. The expected format is a Polygon defined by the WKT :  
-     *          POLYGON ((XX.XXX XX.XXXXX, Y.YYYYY YY.YYYY, ZZ.ZZZZZ ZZ.ZZZZ, ..., XX.XXX XX.XXXXX))
-     *         On n'accepte pour l'instant que les polygonnes. 
-     *         Il faudra plus tard pouvoir accepter les autres types de géométries (POINT, LINE, etc. )
-     *         La vérification du type de projection (WGS84 attendu) se fera à l'insertion des données
+     * Checks the geometry format. The expected format is a Polygon defined by the WKT :  
+     * POLYGON ((XX.XXX XX.XXXXX, Y.YYYYY YY.YYYY, ZZ.ZZZZZ ZZ.ZZZZ, ..., XX.XXX XX.XXXXX))
+     * For the moment, only polygons accepted. Projection type check (WGS84 required)
+     * will be done when inserting the data.
      * @param string $geometry
-     * @return true si la geometry est correcte, 
-     *         false sinon
+     * @return true if valid geometry, 
+     *         false otherwise
      */
     private function isGeometryOk($geometry) {        
         $explodeByOpenPar = explode("((", $geometry);
@@ -250,13 +250,13 @@ require_once '../config/config.php';
     }
     
     /**
-     * check if an experiment exist
+     * Checks if an experiment exists.
      * @param string $experimentURI
-     * @return boolean true if the experiment exist
+     * @return boolean true if the experiment exists.
      */
     private function existExperiment($experimentURI) {
         $experimentModel = new YiiExperimentModel(null, null);
-        $experimentModel->findByURI(Yii::$app->session['access_token'], $experimentURI);
+        $experimentModel->findByURI(Yii::$app->session[WSConstants::ACCESS_TOKEN], $experimentURI);
         
         return $experimentModel->uri !== null;
     }
@@ -264,16 +264,16 @@ require_once '../config/config.php';
     /**
      * 
      * @param string $species
-     * @return boolean true if the specie uri is in the species list
+     * @return boolean true if the specie URI is in the species list.
      */
-    private function existSpecies($species) {
+    private function existsSpecies($species) {
         $aoModel = new YiiScientificObjectModel();
         return in_array($species, $aoModel->getSpeciesUriList());
     }
     
     /**
-     * check the CSV file 
-     * @param array $csvContent csv contents for the scientific objects creation
+     * Checks the CSV file.
+     * @param array $csvContent CSV contents for the scientific objects creation
      * @return array the errors 
      *               null if no error
      */
@@ -296,7 +296,9 @@ require_once '../config/config.php';
                         $error = null;
                         $error["line"] = "L." . ($i + 1);
                         $error["column"] = ScientificObjectController::GEOMETRY;
-                        $error["message"] = Yii::t('app/messages', 'Bad geometry given') . ". " . Yii::t('app/messages', 'Expected format') . " : POLYGON ((1.33 2.33, 3.44 5.66, 4.55 5.66, 6.77 7.88, 1.33 2.33))";
+                        $error["message"] = Yii::t('app/messages', 'Bad geometry given') . ". " 
+                                . Yii::t('app/messages', 'Expected format') 
+                                . " : POLYGON ((1.33 2.33, 3.44 5.66, 4.55 5.66, 6.77 7.88, 1.33 2.33))";
                         $errors[] = $error;
                         }
                 }
@@ -305,16 +307,18 @@ require_once '../config/config.php';
                         $error = null;
                         $error["line"] = "L." . ($i + 1);
                         $error["column"] = ScientificObjectController::EXPERIMENT_URI;
-                        $error["message"] = Yii::t('app/messages', 'Unknown experiment') . " : " . $row[$headerCheck[ScientificObjectController::EXPERIMENT_URI]];
+                        $error["message"] = Yii::t('app/messages', 'Unknown experiment') . " : " 
+                                . $row[$headerCheck[ScientificObjectController::EXPERIMENT_URI]];
                         $errors[] = $error;
                     }
                     $experiments[] = $row[$headerCheck[ScientificObjectController::EXPERIMENT_URI]];
                 }               
-                if (!$this->existSpecies($row[$headerCheck["Species"]])) {
+                if (!$this->existsSpecies($row[$headerCheck["Species"]])) {
                     $error = null;
                     $error["line"] = "L." . ($i + 1);
                     $error["column"] = ScientificObjectController::SPECIES;
-                    $error["message"] = Yii::t('app/messages', 'Unknown species') . " : " . $row[$headerCheck[ScientificObjectController::SPECIES]];
+                    $error["message"] = Yii::t('app/messages', 'Unknown species') . " : " 
+                            . $row[$headerCheck[ScientificObjectController::SPECIES]];
                     $errors[] = $error;
                 }
                 if ($row[$headerCheck["Alias"]] == "") {
@@ -331,7 +335,7 @@ require_once '../config/config.php';
     }
     
     /**
-     * get a message html error to show with the errors founded in the csv file
+     * Gets a HTML error message to show with the errors found in the CSV file.
      * @param array $arrayError errors. Expected format :
      *                                     ["L.85"]["Geometry"]["Error message"]
      * @return string the message to show to the user 
@@ -355,22 +359,21 @@ require_once '../config/config.php';
         }
         
         return $errorMessage;
-    }
+    }    
 
     /**
-     * generated the scientific object creation page
+     * Generates the scientific object creation view.
      * @return mixed
      */
     public function actionCreate() {
-        $sessionToken = Yii::$app->session['access_token'];
         $model = new YiiScientificObjectModel();
         
         $objectsTypes = $this->getObjectTypes();
-        if ($objectsTypes === "token") {
+        if ($objectsTypes === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
         $experiments = $this->getExperimentsURI();
-        if ($experiments === "token") {
+        if ($experiments === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }        
         
@@ -385,12 +388,12 @@ require_once '../config/config.php';
     }
     
     /**
-     * create the given objects
-     * @return string the json of the creation return
+     * Creates the given objects.
+     * @return string the JSON of the creation return.
      */
     public function actionCreateMultipleScientificObjects() {
         $objects = json_decode(Yii::$app->request->post()["objects"]);
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         
         $return = [
             "objectUris" => [],
@@ -402,7 +405,7 @@ require_once '../config/config.php';
             foreach ($objects as $object) {
                 $scientificObjectModel = new YiiScientificObjectModel();
                 
-                $scientificObjectModel->label = $object[1];
+                $scientificObjectModel->alias = $object[1];
                 $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
                 $scientificObjectModel->experiment = $object[3];
                 $scientificObjectModel->geometry = $object[4];
@@ -417,27 +420,25 @@ require_once '../config/config.php';
                 $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
                 
                 
-                if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
-                    $return["objectUris"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
+                if ($insertionResult->{WSConstants::METADATA}->status[0]->exception->type != WSConstants::ERROR) {
+                    $return["objectUris"][] = $insertionResult->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0];
                     $return["messages"][] = "object saved";
                 }
                 else {
                     $return["objectUris"][] = null;
-                    $return["messages"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->details;
+                    $return["messages"][] = $insertionResult->{WSConstants::METADATA}->status[0]->exception->details;
                 }
             }      
-          
-        }
-        
+        }        
         return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
     
     /**
      * 
-     * @param string $vectorType
-     * @return string the complete vector type uri corresponding to the given 
-     *                vector type
-     *                e.g. http://www.opensilex.org/vocabulary/oeso#UAV
+     * @param string $objectType
+     * @return string the complete vector type URI corresponding to the given 
+     * vector type.
+     * @example http://www.opensilex.org/vocabulary/oeso#UAV
      */
     private function getObjectTypeCompleteUri($objectType) {
         $objectTypesList = $this->getObjectsTypesUris();
@@ -450,12 +451,12 @@ require_once '../config/config.php';
     }
     
     /**
-     * get the vectors types (complete uri)
-     * @return array list of the vectors types uris 
-     * e.g. [
-     *          "http://www.opensilex.org/vocabulary/oeso#UAV",
-     *          "http://www.opensilex.org/vocabulary/oeso#Pot"
-     *      ]
+     * Gets the vectors types (complete URI).
+     * @return array list of the vectors types URIs 
+     * @example [
+     *            "http://www.opensilex.org/vocabulary/oeso#UAV",
+     *            "http://www.opensilex.org/vocabulary/oeso#Pot"
+     *          ]
      */
     public function getObjectsTypesUris() {
         $model = new YiiScientificObjectModel();
@@ -464,54 +465,36 @@ require_once '../config/config.php';
         $totalPages = 1;
         for ($i = 0; $i < $totalPages; $i++) {
             $model->page = $i;
-            $objectsConcepts = $model->getObjectTypes(Yii::$app->session['access_token']);
-            if ($objectsConcepts === "token") {
-                return "token";
+            $objectsConcepts = $model->getObjectTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+            if ($objectsConcepts === WSConstants::TOKEN) {
+                return WSConstants::TOKEN;
             } else {
-                $totalPages = $objectsConcepts[\app\models\wsModels\WSConstants::PAGINATION][\app\models\wsModels\WSConstants::TOTAL_PAGES];
-                foreach ($objectsConcepts[\app\models\wsModels\WSConstants::DATA] as $objectType) {
+                $totalPages = $objectsConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
+                foreach ($objectsConcepts[WSConstants::DATA] as $objectType) {
                     $objectsTypes[] = $objectType->uri;
                 }
             }
         }
-        
         return $objectsTypes;
     }
     
     /**
-     * 
-     * @param array $experiments
-     * @return array key : experiment uri, value : experiment alias. 
-     *               e.g "http://experiment/uri" => "experimentAlias"
-     */
-    private function experimentsToMap($experiments) {
-        if ($experiments !== null) {
-            return \yii\helpers\ArrayHelper::map($experiments, 'uri', 'alias');
-        } else {
-            return null;
-        }
-    }
-    
-        /**
-     * @update Dec. 2018 : the geometry becomes facultative and it is required to define the rdfType
-     * @param array $fileContent the csv file content
+     * @param array $fileContent the CSV file content
      * @param array $correspondances the columns numbers corresponding to the 
-     *                               expected columns (if the file columns are 
-     *                               not in the good order) 
-     * @return array data of the attribute $fileContent 
-     *               in the web service expected format
+     * expected columns (if the file columns are not in the good order) 
+     * @return array data of the attribute $fileContent in the web service expected format
      */
     private function getArrayForWebServiceCreate($scientificObject) {
         
-        if ($scientificObject["label"] != null) {
+        if ($scientificObject[YiiScientificObjectModel::ALIAS] != null) {
             $alias["relation"] = Yii::$app->params['rdfsLabel'];
-            $alias["value"] = $scientificObject["label"];
+            $alias["value"] = $scientificObject[YiiScientificObjectModel::ALIAS];
             $p["properties"][] = $alias;
         }
         
-        $p["rdfType"] = $scientificObject["rdfType"];
-        $p["experiment"] = $scientificObject["experiment"];
-        $p["geometry"] = $scientificObject["geometry"];
+        $p[YiiScientificObjectModel::RDF_TYPE] = $scientificObject[YiiScientificObjectModel::RDF_TYPE];
+        $p[YiiScientificObjectModel::EXPERIMENT] = $scientificObject[YiiScientificObjectModel::EXPERIMENT];
+        $p[YiiScientificObjectModel::GEOMETRY] = $scientificObject[YiiScientificObjectModel::GEOMETRY];
         
         if ($scientificObject["ispartof"] != null) {
             $parent["relation"] = Yii::$app->params['isPartOf'];
@@ -520,16 +503,16 @@ require_once '../config/config.php';
         }
         
         if ($scientificObject["species"] != null) {
-            $species["rdfType"] = Yii::$app->params['Species'];
+            $species[YiiScientificObjectModel::RDF_TYPE] = Yii::$app->params['Species'];
             $species["relation"] = Yii::$app->params['hasSpecies'];
-            $species["value"] = $scientificObject["species"];
+            $species["value"] = $scientificObject[YiiScientificObjectModel::SPECIES];
             $p["properties"][] = $species;
         }
         
-        if ($scientificObject["variety"] != null) {
-            $variety["rdfType"] = Yii::$app->params['Variety'];
+        if ($scientificObject[YiiScientificObjectModel::VARIETY] != null) {
+            $variety[YiiScientificObjectModel::RDF_TYPE] = Yii::$app->params['Variety'];
             $variety["relation"] = Yii::$app->params['hasVariety'];
-            $value = str_replace(" ", "_", $scientificObject["variety"]);
+            $value = str_replace(" ", "_", $scientificObject[YiiScientificObjectModel::VARIETY]);
             $variety["value"] = $value;
             $p["properties"][] = $variety;
         }
@@ -551,10 +534,8 @@ require_once '../config/config.php';
         return $forWebService;
     }
     
-    
-    
     /**
-     * scientific objects index (list of scientific objects)
+     * Renders the scientific objects index.
      * @return mixed
      */
     public function actionIndex() {
@@ -562,14 +543,14 @@ require_once '../config/config.php';
         
         //Get the search params and update the page if needed
         $searchParams = Yii::$app->request->queryParams;        
-        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
-            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
         }
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -579,11 +560,12 @@ require_once '../config/config.php';
         } else {
             //Get the experiments list
             $experimentModel = new YiiExperimentModel();
-            $this->view->params['listExperiments'] = $experimentModel->getExperimentsURIAndLabelList(Yii::$app->session['access_token']);
+            $this->view->params['listExperiments'] = 
+                    $experimentModel->getExperimentsURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
             
             //Get all the types of scientific objects
             $objectsTypes = $this->getObjectsTypesUris();
-            if ($objectsTypes === "token") {
+            if ($objectsTypes === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             }
             
@@ -602,25 +584,27 @@ require_once '../config/config.php';
     }
     
     /**
-     * allows the user to download the csv of a search scientific objects 
-     * result on the index page
+     * Allows the user to download the CSV file of a scientific objects search
+     * result on the index page.
      * @return mixed 
      */
     public function actionDownloadCsv() {
         $searchModel = new ScientificObjectSearch();
         if (isset($_GET['model'])) {
             $searchParams = $_GET['model'];
-            $searchModel->label = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
+            $searchModel->alias = 
+                    isset($searchParams[YiiScientificObjectModel::ALIAS]) ? $searchParams[YiiScientificObjectModel::ALIAS] : null;
             $searchModel->type = isset($searchParams["type"]) ? $searchParams["type"] : null;
-            $searchModel->experiment = isset($searchParams["experiment"]) ? $searchParams["experiment"] : null;
+            $searchModel->experiment = 
+                    isset($searchParams[YiiScientificObjectModel::EXPERIMENT]) ? $searchParams[YiiScientificObjectModel::EXPERIMENT] : null;
         } else {
             $searchParams = [];
         }
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -641,22 +625,25 @@ require_once '../config/config.php';
             
             for ($i = 0; $i <= intval($searchModel->totalPages); $i++) {
                 //1. call service for each page
-                $searchParams["page"] = $i;
+                $searchParams[YiiModelsConstants::PAGE] = $i;
                 
                 //SILEX:TODO
                 //Find why the $this->load does not work in this case in the search
-                $searchModel->experiment = isset($_GET['model']["uri"]) ? $_GET['model']["uri"] : null;
-                $searchModel->experiment = isset($_GET["model"]["alias"]) ? $_GET["model"]["alias"] : null;
-                $searchModel->experiment = isset($_GET['model']['experiment']) ? $_GET['model']['experiment'] : null;
+                $searchModel->experiment = 
+                        isset($_GET['model'][YiiScientificObjectModel::URI]) ? $_GET['model'][YiiScientificObjectModel::URI] : null;
+                $searchModel->experiment = 
+                        isset($_GET["model"][YiiScientificObjectModel::ALIAS]) ? $_GET["model"][YiiScientificObjectModel::ALIAS] : null;
+                $searchModel->experiment = 
+                        isset($_GET['model'][YiiScientificObjectModel::EXPERIMENT]) ? $_GET['model'][YiiScientificObjectModel::EXPERIMENT] : null;
                 //\SILEX:TODO
-                $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+                $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
                                 
                 //2. write in file
                 $models = $searchResult->getmodels();
                 
                 foreach ($models as $model) {
                     $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
-                                     $model->label . ScientificObjectController::DELIM_CSV .
+                                     $model->alias . ScientificObjectController::DELIM_CSV .
                                      $model->rdfType . ScientificObjectController::DELIM_CSV .
                                      $model->experiment . ScientificObjectController::DELIM_CSV . 
                                      "\n";
@@ -666,80 +653,5 @@ require_once '../config/config.php';
             }
             Yii::$app->response->sendFile($serverFilePath); 
         }
-    }
-    
-    /**
-     * Generated the scientific object update page.
-     * @return mixed
-     */
-    public function actionUpdate() {
-        $sessionToken = Yii::$app->session['access_token'];
-        $model = new YiiScientificObjectModel();
-        
-        $objectsTypes = $this->getObjectTypes();
-        if ($objectsTypes === "token") {
-            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-        }
-        $experiments = $this->getExperimentsURI();
-        if ($experiments === "token") {
-            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-        }        
-        
-        $species = $this->getSpecies();
-        
-        return $this->render('update', [
-            'model' => $model,
-            'objectsTypes' => json_encode($objectsTypes, JSON_UNESCAPED_SLASHES),
-            'experiments' => json_encode($experiments, JSON_UNESCAPED_SLASHES),
-            'species' => json_encode($species,JSON_UNESCAPED_SLASHES)
-        ]);
-    }
-    
-    /**
-     * Update the given objects
-     * @return string the json of the creation return
-     */
-    public function actionUpdateMultipleScientificObjects() {
-        $objects = json_decode(Yii::$app->request->post()["objects"]);
-        $sessionToken = Yii::$app->session['access_token'];
-        
-        $return = [
-            "error" => false,
-            "objectUris" => [],
-            "messages" => []
-        ];        
-
-        if (count($objects) > 0) {
-
-            foreach ($objects as $object) {
-                $scientificObjectModel = new YiiScientificObjectModel();
-                $uri = $object[0];
-                $scientificObjectModel->label = $object[1];
-                $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
-                $experiment = $object[3];
-                $scientificObjectModel->geometry = $object[4];
-                $scientificObjectModel->parent = $object[5];
-                $scientificObjectModel->species = $object[6];
-                $scientificObjectModel->variety = $object[7];  
-                $scientificObjectModel->modality = $object[8];
-                $scientificObjectModel->replication = $object[9];
-                
-                $insertionResult = $scientificObjectModel->updateByExperiment($sessionToken, $uri, $experiment);
-                
-                 if ($insertionResult === \app\models\wsModels\WSConstants::TOKEN) {
-                    return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
-                } else if (isset($insertionResult->metadata->status[0]->exception->type)
-                            && $insertionResult->metadata->status[0]->exception->type !== "Error") {
-                    $return["objectUris"][] = $insertionResult->metadata->datafiles[0];
-                    $return["messages"][] = "object updated";
-                }
-                else {
-                    $return["error"] = true;
-                    $return["objectUris"][] = null;
-                    $return["messages"][] = $insertionResult->metadata->status[0]->exception->details;
-                }
-            }
-        }        
-        return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
  }

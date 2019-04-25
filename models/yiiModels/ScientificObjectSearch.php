@@ -1,25 +1,19 @@
 <?php
-
-//**********************************************************************************************
-//                                       ScientificObjectSearch.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: October 2017
+//******************************************************************************
+//                            ScientificObjectSearch.php 
+// SILEX-PHIS
+// Copyright © INRA 2017
+// Creation date: Oct. 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  October, 3 2017
-// Subject: ScientificObjectSearch represents the model behind the search form about app\models\YiiScientificObjectModel
-//          Based on the Yii2 Search basic class
-//***********************************************************************************************
-
+//******************************************************************************
 namespace app\models\yiiModels;
 
 use app\models\yiiModels\YiiScientificObjectModel;
+use yii\data\ArrayDataProvider;
+use app\models\wsModels\WSConstants;
 
 /**
- * implements the search action for the scientific objects
- *
+ * Implements the search action for the scientific objects.
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ScientificObjectSearch extends YiiScientificObjectModel {
@@ -34,12 +28,11 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     public function rules()
     {
         return [
-            [['uri', 'experiment', 'alias', 'type'], 'safe'],
+            [[self::URI, self::EXPERIMENT, self::ALIAS, self::TYPE], 'safe'],
         ];
     }
     
     /**
-     * 
      * @param array $sessionToken used for the data access
      * @param string $params search params
      * @return mixed DataProvider of the result 
@@ -56,7 +49,7 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
         
         //2. Check validity of search data
         if (!$this->validate()) {
-            return new \yii\data\ArrayDataProvider();
+            return new ArrayDataProvider();
         }
         
         //3. Request to the web service and return result        
@@ -64,12 +57,13 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
         
         if (is_string($findResult)) {
             return $findResult;
-        } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+        } else if (isset($findResult->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}) 
+                    && $findResult->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === 
+                    WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
-            return new \yii\data\ArrayDataProvider([
+            return new ArrayDataProvider([
                 'models' => $resultSet,
                 'pagination' => [
                     'pageSize' => $this->pageSize,
@@ -81,20 +75,5 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
                 //\SILEX:info
             ]);
         }
-    }
-    
-    /**
-     * transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        } 
-        return $toReturn;
     }
 }

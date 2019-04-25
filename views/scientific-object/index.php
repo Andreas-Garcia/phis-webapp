@@ -1,16 +1,15 @@
 <?php
-//**********************************************************************************************
-//                                       index.php 
-//
+//******************************************************************************
+//                                 index.php 
 // SILEX-PHIS
 // Copyright © INRA 2017
-// Creation date: October 2017
+// Creation date: Oct. 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-//***********************************************************************************************
-
+//******************************************************************************
 use kartik\icons\Icon;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ScientificObjectSearch */
@@ -27,8 +26,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(
+                Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), 
+                ['download-csv', 'model' => $searchModel], 
+                ['class' => 'btn btn-primary']) ?>
     </p>
     
    <?= GridView::widget([
@@ -42,14 +43,14 @@ $this->params['breadcrumbs'][] = $this->title;
                'value' => 'uri',
               'filter' =>false,
             ],
-            'label',
+            'alias',
             [
                 'attribute' => 'rdfType',
                 'format' => 'raw',
                 'value' => function($model, $key, $index) {
                     return explode("#", $model->rdfType)[1];
                 },
-                'filter' => \kartik\select2\Select2::widget([
+                'filter' => Select2::widget([
                     'attribute' => 'type',
                     'model' => $searchModel,
                     'data' => $scientificObjectTypes,
@@ -85,14 +86,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model, $key, $index) {
                     return Html::a($model->experiment, ['experiment/view', 'id' => $model->experiment]);
                 },
-                'filter' => \kartik\select2\Select2::widget([
-                            'attribute' => 'experiment',
-                            'model' => $searchModel,
-                            'data' => $this->params['listExperiments'],
-                            'options' => [
-                                'placeholder' => 'Select experiment alias...'
-                            ]
-                        ]),
+                'filter' => Select2::widget([
+                        'attribute' => 'experiment',
+                        'model' => $searchModel,
+                        'data' => $this->params['listExperiments'],
+                        'options' => [
+                            'placeholder' => 'Select experiment alias...'
+                        ]
+                    ]),
             ]
         ],
     ]); ?>
