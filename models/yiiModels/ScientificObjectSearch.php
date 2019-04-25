@@ -22,6 +22,8 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     //each class ElementNameSearch
     //\SILEX:refactor
     
+    const TYPE = "type";
+    
     /**
      * @inheritdoc
      */
@@ -33,10 +35,10 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     }
     
     /**
-     * @param array $sessionToken used for the data access
-     * @param string $params search params
+     * @param array $sessionToken used for the data access.
+     * @param string $params search params.
      * @return mixed DataProvider of the result 
-     *               or string "token" if the user needs to log in
+     *         string "token" if the user needs to log in
      */
     public function search($sessionToken, $params) {
         
@@ -58,8 +60,8 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}) 
-                    && $findResult->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === 
-                    WSConstants::TOKEN_INVALID) {
+            && $findResult->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === 
+                WSConstants::TOKEN_INVALID) {
             return WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);

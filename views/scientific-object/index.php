@@ -10,6 +10,7 @@ use kartik\icons\Icon;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\select2\Select2;
+use app\models\yiiModels\ScientificObjectSearch;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ScientificObjectSearch */
@@ -38,9 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-              'attribute' => 'uri',
+              'attribute' => ScientificObjectSearch::URI,
               'format' => 'raw',
-               'value' => 'uri',
               'filter' =>false,
             ],
             'alias',
