@@ -8,6 +8,7 @@
 //******************************************************************************
 namespace app\models\yiiModels;
 
+use Yii;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSScientificObjectModel;
@@ -28,6 +29,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
      */
     public $uri;
     const URI = "uri";
+    const URI_LABEL = "URI";
     
     /**
      * Geometry of the scientific objects. 
@@ -45,6 +47,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
      */
     public $type;
     const RDF_TYPE = "rdfType";
+    const RDF_TYPE_LABEL = "Type";
     
     /**
      * URI of the experiment in which the scientific object is.
@@ -89,6 +92,19 @@ class YiiScientificObjectModel extends WSActiveRecord {
     
     public $parent;
     const ISPARTOF = "ispartof";
+    
+    /**
+     * @return array the labels of the attributes.
+     */
+    public function attributeLabels() {
+        return array_merge(
+            parent::attributeLabels(),
+            [
+                self::URI => Yii::t('app', self::URI_LABEL),
+                self::RDF_TYPE => Yii::t('app', self::RDF_TYPE_LABEL)
+            ]
+        );
+    }
 
     /**
      * Initializes wsModel. In this class, wsModel is a WSScientificObjectModel.
