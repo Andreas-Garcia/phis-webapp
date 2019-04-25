@@ -187,7 +187,7 @@ return [
     
     // Scientific objects
     ScientificObjectSearch::RDF_TYPE_SELECT_LABEL => "Choisir type",
-    ScientificObjectSearch::EXPERIMENT_ALIAS_SELECT_LABEL => "Choisir un alias d'expérimentation",
+    ScientificObjectSearch::EXPERIMENT_SELECT_LABEL => "Choisir un alias d'expérimentation",
     
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',

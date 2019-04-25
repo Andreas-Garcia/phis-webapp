@@ -92,7 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'model' => $searchModel,
                         'data' => $this->params['listExperiments'],
                         'options' => [
-                            'placeholder' => Yii::t('app', ScientificObjectSearch::EXPERIMENT_ALIAS_SELECT_LABEL)
+                            'placeholder' => Yii::t('app', ScientificObjectSearch::EXPERIMENT_SELECT_LABEL)
                         ]
                     ]),
             ]

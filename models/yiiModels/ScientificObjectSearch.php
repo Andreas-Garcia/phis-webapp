@@ -24,7 +24,7 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     
     const TYPE = "type";
     const RDF_TYPE_SELECT_LABEL = 'Select type';
-    const EXPERIMENT_ALIAS_SELECT_LABEL = 'Select experiment alias';
+    const EXPERIMENT_SELECT_LABEL = 'Select experiment';
     /**
      * @inheritdoc
      */
