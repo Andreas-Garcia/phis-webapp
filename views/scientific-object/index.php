@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => ScientificObjectSearch::URI,
               'format' => 'raw',
-              'filter' =>false,
+              'filter' => false,
             ],
             'alias',
             [
@@ -50,12 +50,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($model, $key, $index) {
                     return explode("#", $model->rdfType)[1];
                 },
+                'headerOptions' => ['style' => 'min-width:169px'],
                 'filter' => Select2::widget([
                     'attribute' => ScientificObjectSearch::TYPE,
                     'model' => $searchModel,
                     'data' => $scientificObjectTypes,
                     'options' => [
-                        'placeholder' => 'Select object type...'
+                        'placeholder' => 'Select type'
                     ],
                     'pluginOptions' => [
                         'allowClear' => true
