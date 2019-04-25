@@ -56,6 +56,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
      */
     public $experiment;
     const EXPERIMENT = "experiment";
+    const EXPERIMENT_LABEL = "Experiment";
     
     /**
      * Year of the scientific object .
@@ -79,19 +80,25 @@ class YiiScientificObjectModel extends WSActiveRecord {
     const LABEL = "label";
     const LABEL_LABEL = "Alias";
     
-    const PROPERTIES_LABEL = Properties;
+    public $properties;
+    const PROPERTIES = "properties";
+    const PROPERTIES_LABEL = "Properties";
     
     public $species;
     const SPECIES = "species";
+    const SPECIES_LABEL = "Species";
     
     public $variety;
     const VARIETY = "variety";
+    const VARIETY_LABEL = "Variety";
     
     public $modality;
     const MODALITY = "modality";
+    const MODALITY_LABEL = "Modality";
     
     public $replication;
     const REPLICATION = "replication";
+    const REPLICATION_LABEL = "Replication";
     
     public $parent;
     const ISPARTOF = "ispartof";
@@ -105,7 +112,13 @@ class YiiScientificObjectModel extends WSActiveRecord {
             [
                 self::URI => Yii::t('app', self::URI_LABEL),
                 self::RDF_TYPE => Yii::t('app', self::RDF_TYPE_LABEL),
-                self::LABEL => Yii::t('app', self::LABEL_LABEL)
+                self::LABEL => Yii::t('app', self::LABEL_LABEL),
+                self::PROPERTIES => Yii::t('app', self::PROPERTIES_LABEL),
+                self::EXPERIMENT => Yii::t('app', self::EXPERIMENT_LABEL),
+                self::REPLICATION => Yii::t('app', self::REPLICATION_LABEL),
+                self::MODALITY => Yii::t('app', self::MODALITY_LABEL),
+                self::SPECIES => Yii::t('app', self::SPECIES_LABEL),
+                self::VARIETY => Yii::t('app', self::VARIETY_LABEL)
             ]
         );
     }

@@ -8,9 +8,7 @@
 //******************************************************************************
 use kartik\icons\Icon;
 use yii\helpers\Html;
-use yii\grid\GridView;
-use kartik\select2\Select2;
-use app\models\yiiModels\ScientificObjectSearch;
+use app\components\widgets\ScientificObjectGridViewWidget;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ScientificObjectSearch */
@@ -33,69 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['class' => 'btn btn-primary']) ?>
     </p>
     
-   <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            [
-              'attribute' => ScientificObjectSearch::URI,
-              'format' => 'raw',
-              'filter' => false,
-            ],
-            ScientificObjectSearch::LABEL,
-            [
-                'attribute' => ScientificObjectSearch::RDF_TYPE,
-                'format' => 'raw',
-                'value' => function($model, $key, $index) {
-                    return explode("#", $model->rdfType)[1];
-                },
-                'headerOptions' => ['style' => 'min-width:169px'],
-                'filter' => Select2::widget([
-                    'attribute' => ScientificObjectSearch::TYPE,
-                    'model' => $searchModel,
-                    'data' => $scientificObjectTypes,
-                    'options' => [
-                        'placeholder' => Yii::t('app', ScientificObjectSearch::RDF_TYPE_SELECT_LABEL)
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ]),
-            ],
-            [
-                'attribute' => 'properties',
-                'format' => 'raw',
-                'value' => function($model, $key, $index) {
-                    $toReturn = "<ul>";
-                    foreach ($model->properties as $property) {
-                        if (explode("#", $property->relation)[1] !== ScientificObjectSearch::TYPE) {
-                            $toReturn .= "<li>"
-                                    . "<b>" . explode("#", $property->relation)[1] . "</b>"
-                                    . " : "
-                                    . $property->value
-                                    . "</li>";
-                        }
-                    }
-                    $toReturn .= "</ul>";
-                    return $toReturn;
-                },
-            ],
-            [
-                'attribute' => ScientificObjectSearch::EXPERIMENT,
-                'format' => 'raw',
-                'value' => function ($model, $key, $index) {
-                    return Html::a($model->experiment, ['experiment/view', 'id' => $model->experiment]);
-                },
-                'filter' => Select2::widget([
-                        'attribute' => ScientificObjectSearch::EXPERIMENT,
-                        'model' => $searchModel,
-                        'data' => $this->params['listExperiments'],
-                        'options' => [
-                            'placeholder' => Yii::t('app', ScientificObjectSearch::EXPERIMENT_SELECT_LABEL)
-                        ]
-                    ]),
-            ]
-        ],
-    ]); ?>
+    <?= ScientificObjectGridViewWidget::widget([
+            ScientificObjectGridViewWidget::DATA_PROVIDER => $dataProvider,
+            ScientificObjectGridViewWidget::SEARCH_MODEL => $searchModel,
+            ScientificObjectGridViewWidget::SCIENTIFIC_OBJECT_TYPES => $scientificObjectTypes,
+            ScientificObjectGridViewWidget::EXPERIMENTS => $this->params['listExperiments']
+        ])
+    ?>
 </div>

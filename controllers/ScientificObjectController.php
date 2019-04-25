@@ -548,7 +548,6 @@ require_once '../config/config.php';
         }
         
         $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
-        error_log("sososo ".print_r($searchResult, true));
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -563,7 +562,7 @@ require_once '../config/config.php';
             $this->view->params['listExperiments'] = 
                     $experimentModel->getExperimentsURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
             
-            //Get all the types of scientific objects
+            //Get all types of scientific objects
             $objectsTypes = $this->getObjectsTypesUris();
             if ($objectsTypes === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
