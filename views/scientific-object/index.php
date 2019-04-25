@@ -45,13 +45,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'alias',
             [
-                'attribute' => 'rdfType',
+                'attribute' => ScientificObjectSearch::RDF_TYPE,
                 'format' => 'raw',
                 'value' => function($model, $key, $index) {
                     return explode("#", $model->rdfType)[1];
                 },
                 'filter' => Select2::widget([
-                    'attribute' => 'type',
+                    'attribute' => ScientificObjectSearch::TYPE,
                     'model' => $searchModel,
                     'data' => $scientificObjectTypes,
                     'options' => [
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($model, $key, $index) {
                     $toReturn = "<ul>";
                     foreach ($model->properties as $property) {
-                        if (explode("#", $property->relation)[1] !== "type") {
+                        if (explode("#", $property->relation)[1] !== ScientificObjectSearch::TYPE) {
                             $toReturn .= "<li>"
                                     . "<b>" . explode("#", $property->relation)[1] . "</b>"
                                     . " : "
@@ -81,13 +81,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'attribute' => 'experiment',
+                'attribute' => ScientificObjectSearch::EXPERIMENT,
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) {
                     return Html::a($model->experiment, ['experiment/view', 'id' => $model->experiment]);
                 },
                 'filter' => Select2::widget([
-                        'attribute' => 'experiment',
+                        'attribute' => ScientificObjectSearch::EXPERIMENT,
                         'model' => $searchModel,
                         'data' => $this->params['listExperiments'],
                         'options' => [
