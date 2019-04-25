@@ -152,7 +152,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
     
 
     /**
-     * Transforms a JSON object into an array
+     * Transforms a JSON object into an array.
      * @param json jsonList
      * @return array
      */

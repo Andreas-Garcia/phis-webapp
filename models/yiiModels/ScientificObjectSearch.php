@@ -23,14 +23,15 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     //\SILEX:refactor
     
     const TYPE = "type";
-    
+    const RDF_TYPE_SELECT_LABEL = 'Select type';
+    const EXPERIMENT_ALIAS_SELECT_LABEL = 'Select experiment alias';
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [[self::URI, self::EXPERIMENT, self::ALIAS, self::TYPE], 'safe'],
+            [[self::URI, self::EXPERIMENT, self::LABEL, self::TYPE], 'safe'],
         ];
     }
     

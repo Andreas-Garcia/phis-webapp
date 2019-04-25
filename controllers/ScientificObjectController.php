@@ -405,7 +405,7 @@ require_once '../config/config.php';
             foreach ($objects as $object) {
                 $scientificObjectModel = new YiiScientificObjectModel();
                 
-                $scientificObjectModel->alias = $object[1];
+                $scientificObjectModel->label = $object[1];
                 $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
                 $scientificObjectModel->experiment = $object[3];
                 $scientificObjectModel->geometry = $object[4];
@@ -486,9 +486,9 @@ require_once '../config/config.php';
      */
     private function getArrayForWebServiceCreate($scientificObject) {
         
-        if ($scientificObject[YiiScientificObjectModel::ALIAS] != null) {
+        if ($scientificObject[YiiScientificObjectModel::LABEL] != null) {
             $alias["relation"] = Yii::$app->params['rdfsLabel'];
-            $alias["value"] = $scientificObject[YiiScientificObjectModel::ALIAS];
+            $alias["value"] = $scientificObject[YiiScientificObjectModel::LABEL];
             $p["properties"][] = $alias;
         }
         
@@ -548,7 +548,7 @@ require_once '../config/config.php';
         }
         
         $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
-        
+        error_log("sososo ".print_r($searchResult, true));
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -592,8 +592,8 @@ require_once '../config/config.php';
         $searchModel = new ScientificObjectSearch();
         if (isset($_GET['model'])) {
             $searchParams = $_GET['model'];
-            $searchModel->alias = 
-                    isset($searchParams[YiiScientificObjectModel::ALIAS]) ? $searchParams[YiiScientificObjectModel::ALIAS] : null;
+            $searchModel->label = 
+                    isset($searchParams[YiiScientificObjectModel::LABEL]) ? $searchParams[YiiScientificObjectModel::LABEL] : null;
             $searchModel->type = isset($searchParams["type"]) ? $searchParams["type"] : null;
             $searchModel->experiment = 
                     isset($searchParams[YiiScientificObjectModel::EXPERIMENT]) ? $searchParams[YiiScientificObjectModel::EXPERIMENT] : null;
@@ -632,7 +632,7 @@ require_once '../config/config.php';
                 $searchModel->experiment = 
                         isset($_GET['model'][YiiScientificObjectModel::URI]) ? $_GET['model'][YiiScientificObjectModel::URI] : null;
                 $searchModel->experiment = 
-                        isset($_GET["model"][YiiScientificObjectModel::ALIAS]) ? $_GET["model"][YiiScientificObjectModel::ALIAS] : null;
+                        isset($_GET["model"][YiiScientificObjectModel::LABEL]) ? $_GET["model"][YiiScientificObjectModel::LABEL] : null;
                 $searchModel->experiment = 
                         isset($_GET['model'][YiiScientificObjectModel::EXPERIMENT]) ? $_GET['model'][YiiScientificObjectModel::EXPERIMENT] : null;
                 //\SILEX:TODO
@@ -643,7 +643,7 @@ require_once '../config/config.php';
                 
                 foreach ($models as $model) {
                     $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
-                                     $model->alias . ScientificObjectController::DELIM_CSV .
+                                     $model->label . ScientificObjectController::DELIM_CSV .
                                      $model->rdfType . ScientificObjectController::DELIM_CSV .
                                      $model->experiment . ScientificObjectController::DELIM_CSV . 
                                      "\n";

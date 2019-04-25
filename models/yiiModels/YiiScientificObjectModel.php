@@ -75,8 +75,11 @@ class YiiScientificObjectModel extends WSActiveRecord {
      * @exmaple 2/DZ_PG_30/ZM4361/WW/1/DIA2017-05-19
      * @var string
      */
-    public $alias;
-    const ALIAS = "alias";
+    public $label;
+    const LABEL = "label";
+    const LABEL_LABEL = "Alias";
+    
+    const PROPERTIES_LABEL = Properties;
     
     public $species;
     const SPECIES = "species";
@@ -101,7 +104,8 @@ class YiiScientificObjectModel extends WSActiveRecord {
             parent::attributeLabels(),
             [
                 self::URI => Yii::t('app', self::URI_LABEL),
-                self::RDF_TYPE => Yii::t('app', self::RDF_TYPE_LABEL)
+                self::RDF_TYPE => Yii::t('app', self::RDF_TYPE_LABEL),
+                self::LABEL => Yii::t('app', self::LABEL_LABEL)
             ]
         );
     }
@@ -135,7 +139,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiScientificObjectModel::URI] = $this->uri;
         $elementForWebService[YiiScientificObjectModel::EXPERIMENT] = $this->experiment;
-        $elementForWebService[YiiScientificObjectModel::ALIAS] = $this->alias;
+        $elementForWebService[YiiScientificObjectModel::LABEL] = $this->label;
         $elementForWebService[YiiScientificObjectModel::RDF_TYPE] = $this->type;
         $elementForWebService[YiiScientificObjectModel::GEOMETRY] = $this->geometry;
         $elementForWebService[YiiScientificObjectModel::SPECIES] = $this->species;

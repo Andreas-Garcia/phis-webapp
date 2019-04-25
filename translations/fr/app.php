@@ -3,14 +3,14 @@
 //                                       app.php
 // SILEX-PHIS
 // Copyright © INRA 2017
-// Creation date:  Mar., 2017
+// Creation date: Mar. 2017
 // Contact: morgane.vidal@inra.fr,arnaud.charleroy, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 /**
- * French translations of this application
+ * French translations of this application.
  * @link https://www.yiiframework.com/extension/translate
- * @update [Arnaud Charleroy] 24 August, 2018: widgets translations
+ * @update [Arnaud Charleroy] 24 Aug. 2018: widgets translations
  */
 
 use app\models\yiiModels\YiiAnnotationModel;
@@ -21,6 +21,7 @@ use app\models\yiiModels\EventPost;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
 use app\components\widgets\PropertyWidget;
+use app\models\yiiModels\ScientificObjectSearch;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
@@ -183,6 +184,11 @@ return [
     'Replication' => 'Répétition',
     'Scientific Contacts' => 'Contacts scientifiques',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
+    
+    // Scientific objects
+    ScientificObjectSearch::RDF_TYPE_SELECT_LABEL => "Choisir type",
+    ScientificObjectSearch::EXPERIMENT_ALIAS_SELECT_LABEL => "Choisir un alias d'expérimentation",
+    
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
     'Select type...' => 'Sélectionez le type',

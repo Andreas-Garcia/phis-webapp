@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
               'format' => 'raw',
               'filter' => false,
             ],
-            'alias',
+            ScientificObjectSearch::LABEL,
             [
                 'attribute' => ScientificObjectSearch::RDF_TYPE,
                 'format' => 'raw',
@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'model' => $searchModel,
                     'data' => $scientificObjectTypes,
                     'options' => [
-                        'placeholder' => 'Select type'
+                        'placeholder' => Yii::t('app', ScientificObjectSearch::RDF_TYPE_SELECT_LABEL)
                     ],
                     'pluginOptions' => [
                         'allowClear' => true
@@ -92,7 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'model' => $searchModel,
                         'data' => $this->params['listExperiments'],
                         'options' => [
-                            'placeholder' => 'Select experiment alias...'
+                            'placeholder' => Yii::t('app', ScientificObjectSearch::EXPERIMENT_ALIAS_SELECT_LABEL)
                         ]
                     ]),
             ]
