@@ -20,6 +20,11 @@ namespace app\models\wsModels;
  */
 abstract class WSActiveRecord extends \yii\base\Model {
     
+    /**
+     * name of the id field in the search parameters
+     */
+    const ID = "id";
+    
     //SILEX:todo
     //use trait representing wsModel instead of attribute wsModel ? 
     //\SILEX:todo
@@ -71,7 +76,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
     public function insert($sessionToken, $attributes) {
         $requestRes =  $this->wsModel->post($sessionToken, "", $attributes);
         
-        if (isset($requestRes->{WSConstants::TOKEN})) {
+        if (isset($requestRes->{WSConstants::TOKEN_INVALID})) {
             return WEB_SERVICE_TOKEN;
         } else {
             return $requestRes;
@@ -89,7 +94,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
      */
     public function update($sessionToken, $attributes) {
         $requestRes = $this->wsModel->put($sessionToken, "", $attributes);
-        if (isset($requestRes->{WSConstants::TOKEN})) {
+        if (isset($requestRes->{WSConstants::TOKEN_INVALID})) {
             return WEB_SERVICE_TOKEN;
         } else {
             return $requestRes;
@@ -101,9 +106,9 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @param array $attributes the search params. It is a key => value array. The key
      *                          is the name of the field.
      * @return an array with the results,
-               "token" if the user needs to log in (invalid token).
+     *         "token" if the user needs to log in (invalid token).
      */
-    public function find($sessionToken, $attributes) {        
+    public function find($sessionToken, $attributes) {  
         $requestRes = $this->wsModel->get($sessionToken, "", $attributes);
 
         if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION})) {
@@ -127,7 +132,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
     }
     
     /**
-     * Creates an array representing the image metadata.
+     * Creates an array representing search parameters about pagination
      * Used for the web service for example
      * @return array with the attributes. 
      */
@@ -144,4 +149,20 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @param array $array array key => value which contains the metadata of an image
      */
     abstract protected function arrayToAttributes($array);
+    
+
+    /**
+     * Transforms a JSON object into an array
+     * @param json jsonList
+     * @return array
+     */
+    protected static function jsonListOfArraysToArray($jsonList) {
+        $toReturn = [];
+        if ($jsonList !== null) {
+            foreach ($jsonList as $value) {
+                $toReturn[] = $value;
+            }
+        }
+        return $toReturn;
+    }
 }
